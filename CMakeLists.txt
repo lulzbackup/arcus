@@ -21,7 +21,7 @@ if(BUILD_PYTHON)
         set(PYTHON_SITE_PACKAGES_DIR lib/python3/dist-packages CACHE STRING "Directory to install Python bindings to")
     endif()
     find_package(SIP REQUIRED)
-    include_directories(python/ src/ ${PYTHON_INCLUDE_DIR} ${SIP_INCLUDE_DIR})
+    include_directories(python/ src/ ${SIP_INCLUDE_DIR} ${PYTHON_INCLUDE_DIR})
 endif()
 
 if(NOT ${CMAKE_VERSION} VERSION_LESS 3.1)
