@@ -16,7 +16,7 @@ set(DEB_DEPENDS
     "libstdc++6 (>= 4.9.0)"
     "libc6 (>= 2.19)"
     "zlib1g (>= 1.2.0)"
-    "protobuf (>= 3.0.0)"
+    "python3-protobuf (>= 3.0.0)"
 )
 string(REPLACE ";" ", " DEB_DEPENDS "${DEB_DEPENDS}")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS ${DEB_DEPENDS})
