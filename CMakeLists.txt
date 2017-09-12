@@ -98,6 +98,7 @@ target_link_libraries(Arcus PUBLIC
 )
 
 if(WIN32)
+    add_definitions(-D_hypot=hypot) # Let's try to fix "error: '::hypot' has not been declared"
     add_definitions(-D_WIN32_WINNT=0x0600) # Declare we require Vista or higher, this allows us to use IPv6 functions.
     target_link_libraries(Arcus PUBLIC Ws2_32)
 endif()
