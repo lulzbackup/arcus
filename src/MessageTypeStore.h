@@ -4,15 +4,15 @@
  * Copyright (C) 2016 Ultimaker b.v. <a.hiemstra@ultimaker.com>
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
+ * it under the terms of the GNU Lesser General Public License v3.0 as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- * You should have received a copy of the GNU Affero General Public License
+ * GNU Lesser General Public License v3.0 for more details.
+ * You should have received a copy of the GNU Lesser General Public License v3.0
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -41,7 +41,7 @@ namespace Arcus
          *
          * \return true if the message type was registered, false if not.
          */
-        bool hasType(uint type_id) const;
+        bool hasType(uint32_t type_id) const;
         /**
          * Check if a certain message type was registered.
          *
@@ -58,7 +58,7 @@ namespace Arcus
          *
          * \return A new instance of a Message or an invalid pointer if type_id was an invalid type.
          */
-        MessagePtr createMessage(uint type_id) const;
+        MessagePtr createMessage(uint32_t type_id) const;
         /**
          * Create a Message instance of a certain type.
          *
@@ -75,7 +75,7 @@ namespace Arcus
          *
          * \return The type id of the message.
          */
-        uint getMessageTypeId(const MessagePtr& message);
+        uint32_t getMessageTypeId(const MessagePtr& message);
 
         std::string getErrorMessages() const;
 

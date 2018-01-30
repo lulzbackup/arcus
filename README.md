@@ -6,59 +6,15 @@ and using this socket to send and receive messages based on the Protocol Buffers
 library. It is designed to facilitate the communication between Cura and its
 backend and similar code.
 
-Installing Protobuf
--------------------
-C++
-
-1. Be sure to have libtool installed.
-2. Download ```protobuf``` >= 3.0.0 from https://github.com/google/protobuf/releases (download ZIP and unZIP at desired location, or clone the repo). The protocol buffer is used for communication between the CuraEngine and the GUI.
-3. Run ```$ autogen.sh``` from the protobuf directory: 
-   $ ```$ ./autogen.sh```
-4. $ ```$ ./configure```
-5. $ ```$ make```
-6. $ ```# make install```  
-   (Please note the ```#```. It indicates the need of superuser, as known as root, priviliges.)
-7. (In case the shared library cannot be loaded, you can try ```sudo ldconfig``` on Linux systems)
-
-Python
-
-1. Navigate to protobuf-master/python
-2. ```# apt-get install python3-setuptools```
-3. ```# python3 setup.py build ```
-4. ```# python3 setup.py install```
-
-Installing Protobuf on Windows
-------------------------------
-C++
-
-(Make sure to use the latest MinGW stable version, e.g. MinGW 4.8.1)
-
-1. Download and install MinGW-get from http://sourceforge.net/projects/mingw/files/Installer/mingw-get/
-2. With MinGW-get, install the MSYS package for MinGW
-3. With MinGW-get, install msys-autogen, msys-automake, msys-libtool
-4. Download ProtoBuf from https://github.com/google/protobuf (tested with version 3.0.0)
-5. Extract ProtoBuf to ```.../MinGW/msys/1.0/local```
-6. Launch ```.../MinGW/msys/1.0/msys.bat``` (run as administrator!)
-7. Open a terminal and navigate to ```.../MinGW/msys/1.0/local/protobuf-3.0.0-alpha-1```
-8. ```$ ./autogen.sh```
-   1. If at this point you are getting errors of missing AM_PROG_AR, you must make sure the ```ar.exe``` binary is installed and the newest stable version.
-9. ```$ ./configure```
-10. ```$ mingw32-make```
-11. ```$ mingw32-make install```
-
-Python
-(Make sure to use the latest Python-3 version, e.g. Python >= 3.4)
-
-1. ```$ cd python```
-2. ```$ python setup.py build```
-3. ```$ python setup.py install```
-
 Building
 ========
 
-To build the library, you need CMake and Protobuf installed (see below). In addition, if the
-Python module should be installed, you need a python interpreter available withh the sip tool
-installed. Only Python 3 is supported.
+To build the library, the following packages are needed:
+* [Protobuf 3](https://github.com/google/protobuf) (3.0+)
+* [CMake](https://www.cmake.org)
+To build the python bindings (default on, disable with -DBUILD_PYTHON=OFF) these additional libries are needed:
+* python3-dev (3.4+)
+* python3-sip-dev (4.16+)
 
 Building the library can be done with:
 
@@ -71,10 +27,10 @@ This will install to CMake's default install prefix, ```/usr/local```. To change
 prefix, set ```CMAKE_INSTALL_PREFIX```. By default, the examples directory is also built.
 To disable this, set BUILD_EXAMPLES to off.
 
-To disable building the Python bindings, set BUILD_PYTHON to OFF. They will be installed
-into ```$prefix/lib/python3.4/site-packages``` on Mac OSX and Windows and to 
-```$prefix/lib/python3/dist-packages``` on Linux. To override this directory, set 
-```PYTHON_SITE_PACKAGES_DIR``` .
+To disable building the Python bindings, set BUILD_PYTHON to OFF. They will be
+installed into ```$prefix/lib/python3/dist-packages``` on Debian-based systems
+and into ```$prefix/lib/python3.4/site-packages``` on other computers. To
+override this directory, set ```PYTHON_SITE_PACKAGES_DIR```.
 
 Building the Python bindings on 64-bit Windows requires you to build with Microsoft Visual
 C++ since the module will fail to import if built with MinGW.

@@ -4,15 +4,15 @@
  * Copyright (C) 2016 Ultimaker b.v. <a.hiemstra@ultimaker.com>
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
+ * it under the terms of the GNU Lesser General Public License v3.0 as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- * You should have received a copy of the GNU Affero General Public License
+ * GNU Lesser General Public License v3.0 for more details.
+ * You should have received a copy of the GNU Lesser General Public License v3.0
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -117,13 +117,13 @@ namespace Arcus
             void flush();
 
             /**
-             * Write a 32-bit integer to the socket.
+             * Write an unsigned 32-bit integer to the socket.
              *
              * \param data The integer to write. Will be converted from local endianness to network endianness.
              *
              * \return The amount of bytes written (4) or -1 if an error occurred.
              */
-            socket_size writeInt32(int32_t data);
+            socket_size writeUInt32(uint32_t data);
             /**
              * Write data to the the socket.
              *
@@ -134,7 +134,7 @@ namespace Arcus
              */
             socket_size writeBytes(std::size_t size, const char* data);
             /**
-             * Read a 32-bit integer from the socket.
+             * Read an unsigned 32-bit integer from the socket.
              *
              * \param output A pointer to an integer that will be written to.
              *
@@ -142,7 +142,7 @@ namespace Arcus
              *
              * \note This call will block if the amount of data waiting to be read is less than 4.
              */
-            socket_size readInt32(int32_t* output);
+            socket_size readUInt32(uint32_t* output);
             /**
              * Read an amount of bytes from the socket.
              *

@@ -10,17 +10,25 @@ option(BUILD_STATIC "Build as a static library" OFF)
 
 option(MSVC_STATIC_RUNTIME "Link the MSVC runtime statically" OFF)
 
-set(REQUIRED_PROTOBUF_VERSION 3.0.0)
-find_package(Protobuf ${REQUIRED_PROTOBUF_VERSION} REQUIRED)
+# We want to have access to protobuf_generate_cpp and other FindProtobuf features.
+# However, if ProtobufConfig is used instead, there is a CMake option that controls
+# this, which defaults to OFF. We need to force this option to ON instead.
+set(protobuf_MODULE_COMPATIBLE ON CACHE "" INTERNAL FORCE)
+find_package(Protobuf 3.0.0 REQUIRED)
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON) #Required if a patch to libArcus needs to be made via templates.
 
 if(BUILD_PYTHON)
     set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
     find_package(SIP REQUIRED)
+    if(NOT DEFINED LIB_SUFFIX)
+        set(LIB_SUFFIX "")
+    endif()
     if(EXISTS /etc/debian_version)
         # Running on a debian-based system, which requires special handling for python modules.
-        set(PYTHON_SITE_PACKAGES_DIR lib/python3/dist-packages CACHE STRING "Directory to install Python bindings to")
+        set(PYTHON_SITE_PACKAGES_DIR lib${LIB_SUFFIX}/python3/dist-packages CACHE STRING "Directory to install Python bindings to")
     else()
-        set(PYTHON_SITE_PACKAGES_DIR lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages CACHE STRING "Directory to install Python bindings to")
+        set(PYTHON_SITE_PACKAGES_DIR lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages CACHE STRING "Directory to install Python bindings to")
     endif()
     include_directories(python/ src/ ${SIP_INCLUDE_DIR} ${PYTHON_INCLUDE_DIR})
 endif()
@@ -33,10 +41,6 @@ endif()
 
 if(APPLE AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-endif()
-
-if(NOT APPLE AND NOT WIN32)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++")
 endif()
 
 set(arcus_SRCS
@@ -89,13 +93,11 @@ if(BUILD_PYTHON)
 endif()
 
 target_include_directories(Arcus PUBLIC
-    ${PROTOBUF_INCLUDE_DIR}
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    ${PROTOBUF_INCLUDE_DIR}
 )
-target_link_libraries(Arcus PUBLIC
-    ${PROTOBUF_LIBRARY}
-)
+target_link_libraries(Arcus PUBLIC ${PROTOBUF_LIBRARIES})
 
 if(WIN32)
     add_definitions(-D_hypot=hypot) # Let's try to fix "error: '::hypot' has not been declared"

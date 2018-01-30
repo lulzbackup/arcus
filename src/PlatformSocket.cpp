@@ -4,15 +4,15 @@
  * Copyright (C) 2016 Ultimaker b.v. <a.hiemstra@ultimaker.com>
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
+ * it under the terms of the GNU Lesser General Public License v3.0 as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- * You should have received a copy of the GNU Affero General Public License
+ * GNU Lesser General Public License v3.0 for more details.
+ * You should have received a copy of the GNU Lesser General Public License v3.0
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -181,7 +181,7 @@ void Arcus::Private::PlatformSocket::flush()
     }
 }
 
-socket_size Arcus::Private::PlatformSocket::writeInt32(int32_t data)
+socket_size Arcus::Private::PlatformSocket::writeUInt32(uint32_t data)
 {
     uint32_t temp = htonl(data);
     socket_size sent_size = ::send(_socket_id, reinterpret_cast<const char*>(&temp), 4, MSG_NOSIGNAL);
@@ -193,13 +193,13 @@ socket_size Arcus::Private::PlatformSocket::writeBytes(std::size_t size, const c
     return ::send(_socket_id, data, size, MSG_NOSIGNAL);
 }
 
-socket_size Arcus::Private::PlatformSocket::readInt32(int32_t* output)
+socket_size Arcus::Private::PlatformSocket::readUInt32(uint32_t* output)
 {
     #ifndef _WIN32
         errno = 0;
     #endif
 
-    int32_t buffer;
+    uint32_t buffer;
     socket_size num = ::recv(_socket_id, reinterpret_cast<char*>(&buffer), 4, 0);
 
     if(num != 4)
@@ -236,11 +236,7 @@ socket_size Arcus::Private::PlatformSocket::readBytes(std::size_t size, char* ou
     socket_size num = ::recv(_socket_id, output, size, 0);
 
     #ifdef _WIN32
-        if(num == WSAETIMEDOUT)
-        {
-            return 0;
-        }
-        else if(num == -1 && WSAGetLastError() == WSAETIMEDOUT)
+        if(num == SOCKET_ERROR && WSAGetLastError() == WSAETIMEDOUT)
         {
             return 0;
         }
