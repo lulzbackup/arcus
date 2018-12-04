@@ -38,8 +38,14 @@ Socket::~Socket()
         delete d->thread;
     }
 
-    for(auto listener : d->listeners)
+    for(SocketListener* listener : d->listeners)
     {
+        /* If deleting the socket listener while another thread is reporting an
+         * error due to closing the socket, deleting the listener causes another
+         * error to report and this causes an infinite loop. Making sure the
+         * listener is dysfunctional before deleting it prevents this. */
+        listener->_socket = nullptr;
+
         delete listener;
     }
 }
@@ -219,19 +225,34 @@ void Socket::sendMessage(MessagePtr message)
     d->sendQueue.push_back(message);
 }
 
-MessagePtr Socket::takeNextMessage()
+MessagePtr Socket::takeNextMessage(bool blocking)
 {
-    std::lock_guard<std::mutex> lock(d->receiveQueueMutex);
-    if(d->receiveQueue.size() > 0)
+    std::unique_lock<std::mutex> lk(d->receiveQueueMutexBlock);
+
+    // Take the next message in the receive queue if available.
     {
-        MessagePtr next = d->receiveQueue.front();
-        d->receiveQueue.pop_front();
-        return next;
+        std::lock_guard<std::mutex> lock(d->receiveQueueMutex);
+        if(d->receiveQueue.size() > 0)
+        {
+            MessagePtr next = d->receiveQueue.front();
+            d->receiveQueue.pop_front();
+            return next;
+        }
     }
-    else
+
+    // If receive queue if empty and this is a non-blocking call, return nullptr immediately.
+    if (!blocking)
     {
         return nullptr;
     }
+
+    // For a blocking call, wait until the receive queue available signal gets triggered and fetch the first message
+    // in the receive queue.
+    // Note that wait causes the current thread to block until the condition variable is notified or a spurious wakeup
+    // occurs, optionally looping until some predicate is satisfied. See https://en.cppreference.com/w/cpp/thread/condition_variable/wait
+    d->message_received_condition_variable.wait(lk);
+    lk.unlock();
+    return takeNextMessage(blocking);
 }
 
 MessagePtr Arcus::Socket::createMessage(const std::string& type)
