@@ -8,9 +8,7 @@ option(BUILD_PYTHON "Build " ON)
 option(BUILD_EXAMPLES "Build the example programs" ON)
 option(BUILD_STATIC "Build as a static library" OFF)
 
-if(WIN32)
-    option(MSVC_STATIC_RUNTIME "Link the MSVC runtime statically" OFF)
-endif()
+option(MSVC_STATIC_RUNTIME "Link the MSVC runtime statically" OFF)
 
 # We want to have access to protobuf_generate_cpp and other FindProtobuf features.
 # However, if ProtobufConfig is used instead, there is a CMake option that controls
